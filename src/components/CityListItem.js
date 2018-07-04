@@ -61,10 +61,10 @@ class CityListItem extends Component {
 
         <View>
           <Text style={style.infoText}>
-            {`min: ${weatherReport.minTemp}`}
+            {`min: ${weatherReport.temp_min}`}
           </Text>
           <Text style={style.infoText}>
-            {`max: ${weatherReport.maxTemp}`}
+            {`max: ${weatherReport.temp_max}`}
           </Text>
         </View>
       </View>
