@@ -38,9 +38,6 @@ class CityListItem extends Component {
   renderInformation() {
     const { isLoading, weatherReport } = this.state;
 
-    const minTemp = weatherData.convertKelvinToCelsius(weatherReport.temp_min);
-    const maxTemp = weatherData.convertKelvinToCelsius(weatherReport.temp_max);
-
     if (isLoading) {
       return (
         <View>
@@ -64,10 +61,10 @@ class CityListItem extends Component {
 
         <View>
           <Text style={style.infoText}>
-            {`min: ${minTemp}`}
+            {`min: ${weatherReport.minTemp}`}
           </Text>
           <Text style={style.infoText}>
-            {`max: ${maxTemp}`}
+            {`max: ${weatherReport.maxTemp}`}
           </Text>
         </View>
       </View>
