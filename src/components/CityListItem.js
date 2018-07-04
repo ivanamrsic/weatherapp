@@ -1,59 +1,95 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
-import * as WeatherDataUtil from '../utils/WeatherDataUtil';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import PropTypes from 'prop-types';
+import * as weatherData from '../service/weatherData';
 
-const CityListItem = props => {
-  const weather = props.weatherReport.weather[0];
+class CityListItem extends Component {
+  static propTypes = {
+    city: PropTypes.object,
+  };
 
-  return (
-    <View style={style.citySection}>
-      <TouchableOpacity onPress={props.onPress}>
-        <View>
-          <Text style={style.cityName}>{props.city.value}</Text>
-        </View>
-      </TouchableOpacity>
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      weatherReport: {},
+    };
+  }
 
-      {!props.isLoading ? (
-        <View style={style.cityInfo}>
-          <Image
-            style={{ width: 50, height: 50 }}
-            source={{
-              uri: 'https://openweathermap.org/img/w/' + weather.icon + '.png',
-            }}
-          />
+  async componentDidMount() {
+    const { city } = this.props;
+    try {
+      this.setState({
+        isLoading: true,
+      });
 
-          <Text style={style.infoText}>{weather.main}</Text>
+      const weatherReport = await weatherData.fetchWeatherData(city);
 
-          <View>
-            <Text style={style.infoText}>
-              min:{' '}
-              {WeatherDataUtil.convertKelvinToCelsius(
-                props.weatherReport.main.temp_min
-              )}
-            </Text>
-            <Text style={style.infoText}>
-              max:{' '}
-              {WeatherDataUtil.convertKelvinToCelsius(
-                props.weatherReport.main.temp_max
-              )}
-            </Text>
-          </View>
-        </View>
-      ) : (
+      this.setState({
+        weatherReport,
+      });
+    } finally {
+      this.setState({
+        isLoading: false,
+      });
+    }
+  }
+
+  renderInformation() {
+    const { isLoading, weatherReport } = this.state;
+
+    const minTemp = weatherData.convertKelvinToCelsius(weatherReport.temp_min);
+    const maxTemp = weatherData.convertKelvinToCelsius(weatherReport.temp_max);
+
+    if (isLoading) {
+      return (
         <View>
           <ActivityIndicator size="large" color="#000000" />
         </View>
-      )}
-    </View>
-  );
-};
+      );
+    }
+
+    return (
+      <View style={style.cityInfo}>
+        <Image
+          style={style.weatherIcon}
+          source={{
+            uri: `https://openweathermap.org/img/w/${weatherReport.icon}.png`,
+          }}
+        />
+
+        <Text style={style.infoText}>
+          {weatherReport.weather_description}
+        </Text>
+
+        <View>
+          <Text style={style.infoText}>
+            {`min: ${minTemp}`}
+          </Text>
+          <Text style={style.infoText}>
+            {`max: ${maxTemp}`}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  render() {
+    const { city } = this.props;
+
+    return (
+      <TouchableOpacity>
+        <View style={style.citySection}>
+          <Text style={style.cityName}>
+            {city.value}
+          </Text>
+
+          {this.renderInformation()}
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}
 
 const style = StyleSheet.create({
   citySection: {
@@ -76,6 +112,10 @@ const style = StyleSheet.create({
   },
   infoText: {
     color: 'white',
+  },
+  weatherIcon: {
+    height: 50,
+    width: 50,
   },
 });
 
