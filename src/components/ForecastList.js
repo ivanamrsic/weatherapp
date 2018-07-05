@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { FlatList } from 'react-native';
-import * as weatherData from '../service/weatherData';
+import { View, FlatList, Text } from 'react-native';
 import ForecastListItem from './ForecastListItem';
+import * as weatherService from '../services/weather';
 
 class ForecastList extends Component {
   constructor(props) {
@@ -13,7 +13,7 @@ class ForecastList extends Component {
   }
 
   componentDidMount() {
-    weatherData.fetchWeatherForcastForCity('Zagreb', this.fetchWeather.bind(this));
+    weatherService.fetchWeatherForcastForCity('Zagreb', this.fetchWeather.bind(this));
   }
 
   fetchWeather(weather) {
