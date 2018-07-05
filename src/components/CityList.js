@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { FlatList, View, StyleSheet } from 'react-native';
-import * as cityData from '../service/cityData';
+import * as city from '../services/city';
 import CityListItem from './CityListItem';
 
-function CityList() {
-  return (
-    <View style={style.list}>
-      <FlatList data={cityData.cityList} renderItem={({ item }) => <CityListItem city={item} />} />
-    </View>
-  );
+class CityList extends Component {
+  renderItem = ({ item }) => <CityListItem city={item} />;
+
+  render() {
+    return (
+      <View style={style.list}>
+        <FlatList data={city.cityList} renderItem={this.renderItem} />
+      </View>
+    );
+  }
 }
 
 const style = StyleSheet.create({

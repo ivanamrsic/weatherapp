@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import PropTypes from 'prop-types';
-import * as weatherData from '../service/weatherData';
+import * as weather from '../services/weather';
 
 class CityListItem extends Component {
   static propTypes = {
@@ -18,12 +18,13 @@ class CityListItem extends Component {
 
   async componentDidMount() {
     const { city } = this.props;
+
     try {
       this.setState({
         isLoading: true,
       });
 
-      const weatherReport = await weatherData.fetchWeatherData(city);
+      const weatherReport = await weather.fetchWeatherData(city);
 
       this.setState({
         weatherReport,
@@ -36,14 +37,13 @@ class CityListItem extends Component {
   }
 
   renderInformation() {
-    const { isLoading, weatherReport } = this.state;
+    const {
+      isLoading,
+      weatherReport: { tempMin, tempMax, icon, description },
+    } = this.state;
 
     if (isLoading) {
-      return (
-        <View>
-          <ActivityIndicator size="large" color="#000000" />
-        </View>
-      );
+      return <ActivityIndicator size="large" color="#000000" />;
     }
 
     return (
@@ -51,20 +51,20 @@ class CityListItem extends Component {
         <Image
           style={style.weatherIcon}
           source={{
-            uri: `https://openweathermap.org/img/w/${weatherReport.icon}.png`,
+            uri: weather.getIconURL(icon),
           }}
         />
 
         <Text style={style.infoText}>
-          {weatherReport.weather_description}
+          {description}
         </Text>
 
         <View>
           <Text style={style.infoText}>
-            {`min: ${weatherReport.temp_min}`}
+            {`min: ${tempMin}`}
           </Text>
           <Text style={style.infoText}>
-            {`max: ${weatherReport.temp_max}`}
+            {`max: ${tempMax}`}
           </Text>
         </View>
       </View>
