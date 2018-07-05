@@ -1,59 +1,92 @@
 import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Image,
-} from 'react-native';
-import * as WeatherDataUtil from '../utils/WeatherDataUtil';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
+import PropTypes from 'prop-types';
+import * as weather from '../services/weather';
 
-const CityListItem = props => {
-  const weather = props.weatherReport.weather[0];
+class CityListItem extends Component {
+  static propTypes = {
+    city: PropTypes.object,
+  };
 
-  return (
-    <View style={style.citySection}>
-      <TouchableOpacity onPress={props.onPress}>
+  constructor(props) {
+    super(props);
+    this.state = {
+      isLoading: false,
+      weatherReport: {},
+    };
+  }
+
+  async componentDidMount() {
+    const { city } = this.props;
+
+    try {
+      this.setState({
+        isLoading: true,
+      });
+
+      const weatherReport = await weather.fetchWeatherData(city);
+
+      this.setState({
+        weatherReport,
+      });
+    } finally {
+      this.setState({
+        isLoading: false,
+      });
+    }
+  }
+
+  renderInformation() {
+    const {
+      isLoading,
+      weatherReport: { tempMin, tempMax, icon, description },
+    } = this.state;
+
+    if (isLoading) {
+      return <ActivityIndicator size="large" color="#000000" />;
+    }
+
+    return (
+      <View style={style.cityInfo}>
+        <Image
+          style={style.weatherIcon}
+          source={{
+            uri: weather.getIconURL(icon),
+          }}
+        />
+
+        <Text style={style.infoText}>
+          {description}
+        </Text>
+
         <View>
-          <Text style={style.cityName}>{props.city.value}</Text>
+          <Text style={style.infoText}>
+            {`min: ${tempMin}`}
+          </Text>
+          <Text style={style.infoText}>
+            {`max: ${tempMax}`}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  render() {
+    const { city } = this.props;
+
+    return (
+      <TouchableOpacity>
+        <View style={style.citySection}>
+          <Text style={style.cityName}>
+            {city.value}
+          </Text>
+
+          {this.renderInformation()}
         </View>
       </TouchableOpacity>
-
-      {!props.isLoading ? (
-        <View style={style.cityInfo}>
-          <Image
-            style={{ width: 50, height: 50 }}
-            source={{
-              uri: 'https://openweathermap.org/img/w/' + weather.icon + '.png',
-            }}
-          />
-
-          <Text style={style.infoText}>{weather.main}</Text>
-
-          <View>
-            <Text style={style.infoText}>
-              min:{' '}
-              {WeatherDataUtil.convertKelvinToCelsius(
-                props.weatherReport.main.temp_min
-              )}
-            </Text>
-            <Text style={style.infoText}>
-              max:{' '}
-              {WeatherDataUtil.convertKelvinToCelsius(
-                props.weatherReport.main.temp_max
-              )}
-            </Text>
-          </View>
-        </View>
-      ) : (
-        <View>
-          <ActivityIndicator size="large" color="#000000" />
-        </View>
-      )}
-    </View>
-  );
-};
+    );
+  }
+}
 
 const style = StyleSheet.create({
   citySection: {
@@ -76,6 +109,10 @@ const style = StyleSheet.create({
   },
   infoText: {
     color: 'white',
+  },
+  weatherIcon: {
+    height: 50,
+    width: 50,
   },
 });
 
