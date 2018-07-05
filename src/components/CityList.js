@@ -4,7 +4,10 @@ import * as city from '../services/city';
 import CityListItem from './CityListItem';
 
 class CityList extends Component {
-  renderItem = ({ item }) => <CityListItem city={item} />;
+  // eslint-disable-next-line class-methods-use-this
+  renderItem({ item }) {
+    return <CityListItem city={item} />;
+  }
 
   render() {
     return (
