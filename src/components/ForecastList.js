@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text } from 'react-native';
+import { FlatList } from 'react-native';
 import * as weatherData from '../service/weatherData';
+import ForecastListItem from './ForecastListItem';
 
 class ForecastList extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      list: [],
+      forecastByDaysList: [],
     };
   }
 
@@ -17,23 +18,16 @@ class ForecastList extends Component {
 
   fetchWeather(weather) {
     this.setState({
-      list: weather,
+      forecastByDaysList: weather,
     });
   }
 
+  renderItem = ({ item }) => <ForecastListItem forecast={item} />;
+
   render() {
-    return (
-      <View>
-        <FlatList
-          data={this.state.list}
-          renderItem={({ item }) => (
-            <Text>
-              {item.weather[0].description}
-            </Text>
-          )}
-        />
-      </View>
-    );
+    const { forecastByDaysList } = this.state;
+
+    return <FlatList data={forecastByDaysList} renderItem={this.renderItem} />;
   }
 }
 
