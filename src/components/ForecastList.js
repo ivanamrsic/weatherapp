@@ -20,7 +20,11 @@ class ForecastList extends Component {
   }
 
   componentDidMount() {
-    weatherService.fetchWeatherForcastForCity('Zagreb', this.fetchWeather);
+    const {
+      city: { value },
+    } = this.props;
+
+    weatherService.fetchWeatherForcastForCity(value, this.fetchWeather);
   }
 
   @autobind

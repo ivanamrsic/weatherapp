@@ -45,7 +45,7 @@ function mapModelForecastToView(model) {
 export const fetchWeatherForcastForCity = async (city, completation) => {
   const response = await axios.get('https://api.openweathermap.org/data/2.5/forecast', {
     params: {
-      q: 'Zagreb',
+      q: city,
       APPID: Config.APPID,
     },
   });
