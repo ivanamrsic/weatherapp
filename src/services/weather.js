@@ -5,21 +5,25 @@ import _ from 'lodash';
 const weatherDataURL = 'https://api.openweathermap.org/data/2.5/weather';
 const weatherImageURL = 'https://openweathermap.org/img/w/';
 const imageExtension = '.png';
+const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const degreeSign = '°';
 
 function convertKelvinToCelsius(temperature) {
-  return (temperature - 273.15).toFixed(1);
+  return (temperature - 273.15).toFixed(0);
 }
 
 function mapModelToView(model) {
   return {
     description: _.get(model, 'weather[0].main'),
-    tempMin: convertKelvinToCelsius(_.get(model, 'main.temp_min')),
-    tempMax: convertKelvinToCelsius(_.get(model, 'main.temp_max')),
+    tempMin: convertKelvinToCelsius(_.get(model, 'main.temp_min')) + degreeSign,
+    tempMax: convertKelvinToCelsius(_.get(model, 'main.temp_max')) + degreeSign,
     icon: _.get(model, 'weather[0].icon'),
+    temp: convertKelvinToCelsius(_.get(model, 'main.temp')) + degreeSign,
+    date: _.get(model, 'dt_txt'),
   };
 }
 
-async function fetchWeatherData(city) {
+export async function fetchWeatherData(city) {
   const response = await axios.get(weatherDataURL, {
     params: {
       q: city.value,
@@ -30,8 +34,12 @@ async function fetchWeatherData(city) {
   return mapModelToView(response.data);
 }
 
-function getIconURL(icon) {
+export function getIconURL(icon) {
   return weatherImageURL + icon + imageExtension;
+}
+
+function mapModelForecastToView(model) {
+  return _.map(model, mapModelToView);
 }
 
 export const fetchWeatherForcastForCity = async (city, completation) => {
@@ -42,11 +50,12 @@ export const fetchWeatherForcastForCity = async (city, completation) => {
     },
   });
 
-  completation(_.filter(response.data.list, o => o.dt_txt.includes('12:00:00')));
+  completation(
+    mapModelForecastToView(_.filter(response.data.list, o => o.dt_txt.includes('12:00:00')))
+  );
 };
 
-function mapModelForecastToView(model) {
-  return {
-    forecast: model.list,
-  };
+export function getDayNameFromDate(date) {
+  const day = new Date(date).getDay();
+  return days[day];
 }

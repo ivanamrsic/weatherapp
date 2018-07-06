@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import * as weather from '../services/weather';
 
 class CityListItem extends Component {
   static propTypes = {
     city: PropTypes.object,
+    navigation: PropTypes.object,
   };
 
   constructor(props) {
@@ -34,6 +36,14 @@ class CityListItem extends Component {
         isLoading: false,
       });
     }
+  }
+
+  @autobind
+  onPress() {
+    const { navigation, city } = this.props;
+    const { weatherReport } = this.state;
+
+    navigation.navigate('Forecast', { city, weatherReport });
   }
 
   renderInformation() {
@@ -75,7 +85,7 @@ class CityListItem extends Component {
     const { city } = this.props;
 
     return (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={this.onPress}>
         <View style={style.citySection}>
           <Text style={style.cityName}>
             {city.value}

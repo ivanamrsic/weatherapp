@@ -1,18 +1,25 @@
 import React, { Component } from 'react';
 import { FlatList, View, StyleSheet } from 'react-native';
-import * as city from '../services/city';
+import { autobind } from 'core-decorators';
+import PropTypes from 'prop-types';
+import * as cityService from '../services/city';
 import CityListItem from './CityListItem';
 
 class CityList extends Component {
-  // eslint-disable-next-line class-methods-use-this
-  renderItem({ item }) {
-    return <CityListItem city={item} />;
+  static propTypes = {
+    navigation: PropTypes.object,
+  };
+
+  @autobind
+  renderItem({ item: city }) {
+    const { navigation } = this.props;
+    return <CityListItem city={city} navigation={navigation} key={city.value} />;
   }
 
   render() {
     return (
       <View style={style.list}>
-        <FlatList data={city.cityList} renderItem={this.renderItem} />
+        <FlatList data={cityService.cityList} renderItem={this.renderItem} />
       </View>
     );
   }

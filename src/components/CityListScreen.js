@@ -1,14 +1,20 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 import CityList from './CityList';
 
-function CityListScreen() {
+function CityListScreen(props) {
+  const { navigation } = props;
   return (
     <View style={styles.container}>
-      <CityList />
+      <CityList navigation={navigation} />
     </View>
   );
 }
+
+CityListScreen.propTypes = {
+  navigation: PropTypes.object,
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -16,7 +22,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-    paddingTop: '20%',
   },
 });
 
