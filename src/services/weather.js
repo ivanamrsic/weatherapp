@@ -29,6 +29,7 @@ function mapModelToView(model) {
 
 export async function fetchWeatherData(city) {
   const response = await axios.get(WEATHER_DATA_URL, {
+
     params: {
       q: city.value,
       APPID: Config.APPID,
