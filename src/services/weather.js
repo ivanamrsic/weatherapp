@@ -42,7 +42,7 @@ export function getIconURL(icon) {
   return WEATHER_IMAGE_URL + icon + IMAGE_EXTENSION;
 }
 
-export async function fetchWeatherForcastForCity(city, completation) {
+export async function fetchWeatherForcastForCity(city) {
   const response = await axios.get(FORCAST_URL, {
     params: {
       q: city,
@@ -54,5 +54,5 @@ export async function fetchWeatherForcastForCity(city, completation) {
 
   const dataMappedToView = _.map(dataFilteredByDays, day => mapModelToView(day));
 
-  completation(dataMappedToView);
+  return dataMappedToView;
 }

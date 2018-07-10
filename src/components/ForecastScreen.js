@@ -23,19 +23,19 @@ class ForecastScreen extends Component {
     };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { navigationParams } = this.state;
     const {
       city: { value },
     } = navigationParams;
 
-    weatherService.fetchWeatherForcastForCity(value, this.fetchWeather);
-  }
+    const forecastByDaysList = await weatherService.fetchWeatherForcastForCity(
+      value,
+      this.fetchWeather
+    );
 
-  @autobind
-  fetchWeather(weather) {
     this.setState({
-      forecastByDaysList: weather,
+      forecastByDaysList,
     });
   }
 
