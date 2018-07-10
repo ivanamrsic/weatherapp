@@ -19,7 +19,7 @@ function mapModelToView(model) {
   };
 }
 
-async function fetchWeatherData(city) {
+export async function fetchWeatherData(city) {
   const response = await axios.get(weatherDataURL, {
     params: {
       q: city.value,
@@ -30,6 +30,6 @@ async function fetchWeatherData(city) {
   return mapModelToView(response.data);
 }
 
-function getIconURL(icon) {
+export function getIconURL(icon) {
   return weatherImageURL + icon + imageExtension;
 }
