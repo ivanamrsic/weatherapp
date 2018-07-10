@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
 import ForecastListItem from './ForecastListItem';
 import * as weatherService from '../services/weather';
