@@ -1,9 +1,17 @@
 import React, { Component } from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  InteractionManager,
+  ActivityIndicator,
+} from 'react-native';
 import PropTypes from 'prop-types';
 import ForecastListItem from './ForecastListItem';
 import * as weatherService from '../services/weather';
 import * as navigationService from '../services/navigation';
+import { autobind } from '../../node_modules/core-decorators';
 
 class ForecastScreen extends Component {
   static propTypes = {
@@ -19,22 +27,27 @@ class ForecastScreen extends Component {
     this.state = {
       forecastByDaysList: [],
       navigationParams,
+      isLoading: true,
     };
   }
 
-  async componentDidMount() {
-    const { navigationParams } = this.state;
-    const {
-      city: { value },
-    } = navigationParams;
+  componentDidMount() {
+    InteractionManager.runAfterInteractions(this.fetchForecastData);
+  }
 
-    const forecastByDaysList = await weatherService.fetchWeatherForcastForCity(
-      value,
-      this.fetchWeather
-    );
+  @autobind
+  async fetchForecastData() {
+    const {
+      navigationParams: {
+        city: { value },
+      },
+    } = this.state;
+
+    const forecastByDaysList = await weatherService.fetchWeatherForcastForCity(value);
 
     this.setState({
       forecastByDaysList,
+      isLoading: false,
     });
   }
 
@@ -43,13 +56,22 @@ class ForecastScreen extends Component {
     return <ForecastListItem forecast={item} key={item.date} />;
   }
 
+  renderInfo() {
+    const { isLoading, forecastByDaysList } = this.state;
+
+    if (isLoading) {
+      return <ActivityIndicator size="large" color="#000000" />;
+    }
+
+    return <FlatList data={forecastByDaysList} renderItem={this.renderItem} />;
+  }
+
   render() {
     const {
       navigationParams: {
         city: { value },
         weatherReport: { description, temp },
       },
-      forecastByDaysList,
     } = this.state;
 
     return (
@@ -65,7 +87,7 @@ class ForecastScreen extends Component {
             {temp}
           </Text>
         </View>
-        <FlatList data={forecastByDaysList} renderItem={this.renderItem} />
+        {this.renderInfo()}
       </View>
     );
   }
@@ -83,10 +105,11 @@ const style = StyleSheet.create({
     color: 'white',
   },
   currentInformation: {
-    flex: 0.7,
+    flex: 0.8,
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#6489c4',
   },
   currentTemperature: {
     fontSize: 50,
@@ -96,6 +119,7 @@ const style = StyleSheet.create({
   screen: {
     flex: 1,
     justifyContent: 'flex-end',
+    backgroundColor: '#6489c4',
   },
 });
 
