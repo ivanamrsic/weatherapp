@@ -2,29 +2,32 @@ import Config from 'react-native-config';
 import axios from 'react-native-axios';
 import _ from 'lodash';
 
-const weatherDataURL = 'https://api.openweathermap.org/data/2.5/weather';
-const weatherImageURL = 'https://openweathermap.org/img/w/';
-const imageExtension = '.png';
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-const degreeSign = '°';
+const WEATHER_DATA_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const WEATHER_IMAGE_URL = 'https://openweathermap.org/img/w/';
+const IMAGE_EXTENSION = '.png';
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DEGREE_SIGN = '°';
 
 function convertKelvinToCelsius(temperature) {
   return (temperature - 273.15).toFixed(0);
 }
 
 function mapModelToView(model) {
+  const tempMin = convertKelvinToCelsius(_.get(model, 'main.temp_min')) + DEGREE_SIGN;
+  const tempMax = convertKelvinToCelsius(_.get(model, 'main.temp_max')) + DEGREE_SIGN;
+  const temp = convertKelvinToCelsius(_.get(model, 'main.temp')) + DEGREE_SIGN;
   return {
+    temp,
+    tempMin,
+    tempMax,
     description: _.get(model, 'weather[0].main'),
-    tempMin: convertKelvinToCelsius(_.get(model, 'main.temp_min')) + degreeSign,
-    tempMax: convertKelvinToCelsius(_.get(model, 'main.temp_max')) + degreeSign,
     icon: _.get(model, 'weather[0].icon'),
-    temp: convertKelvinToCelsius(_.get(model, 'main.temp')) + degreeSign,
     date: _.get(model, 'dt_txt'),
   };
 }
 
 export async function fetchWeatherData(city) {
-  const response = await axios.get(weatherDataURL, {
+  const response = await axios.get(WEATHER_DATA_URL, {
     params: {
       q: city.value,
       APPID: Config.APPID,
@@ -35,7 +38,7 @@ export async function fetchWeatherData(city) {
 }
 
 export function getIconURL(icon) {
-  return weatherImageURL + icon + imageExtension;
+  return WEATHER_IMAGE_URL + icon + IMAGE_EXTENSION;
 }
 
 function mapModelForecastToView(model) {
@@ -57,5 +60,5 @@ export const fetchWeatherForcastForCity = async (city, completation) => {
 
 export function getDayNameFromDate(date) {
   const day = new Date(date).getDay();
-  return days[day];
+  return DAYS[day];
 }

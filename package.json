@@ -7,7 +7,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@babel/plugin-proposal-decorators": "^7.0.0-beta.51",
     "core-decorators": "^0.20.0",
     "eslint-config-airbnb": "^17.0.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
@@ -21,6 +20,7 @@
   },
   "devDependencies": {
     "@babel/cli": "^7.0.0-beta.51",
+    "@babel/plugin-proposal-decorators": "^7.0.0-beta.52",
     "@babel/preset-env": "^7.0.0-beta.51",
     "babel-eslint": "^8.2.5",
     "babel-jest": "23.2.0",

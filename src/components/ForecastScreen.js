@@ -1,30 +1,100 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import _ from 'lodash';
+import React, { Component } from 'react';
+import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { autobind } from 'core-decorators';
 import PropTypes from 'prop-types';
-import ForecastList from './ForecastList';
+import ForecastListItem from './ForecastListItem';
+import * as weatherService from '../services/weather';
+import * as navigationService from '../services/navigation';
 
-function ForecastScreen(props) {
-  const { navigation } = props;
-  return (
-    <View style={style.screen}>
-      <ForecastList
-        city={_.get(navigation, 'state.params.city')}
-        weatherReport={_.get(navigation, 'state.params.weatherReport')}
-      />
-    </View>
-  );
+class ForecastScreen extends Component {
+  static propTypes = {
+    navigation: PropTypes.object,
+  };
+
+  constructor(props) {
+    super(props);
+
+    const { navigation } = this.props;
+    const navigationParams = navigationService.getParams(navigation);
+
+    this.state = {
+      forecastByDaysList: [],
+      navigationParams,
+    };
+  }
+
+  componentDidMount() {
+    const { navigationParams } = this.state;
+    const {
+      city: { value },
+    } = navigationParams;
+
+    weatherService.fetchWeatherForcastForCity(value, this.fetchWeather);
+  }
+
+  @autobind
+  fetchWeather(weather) {
+    this.setState({
+      forecastByDaysList: weather,
+    });
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  renderItem({ item }) {
+    return <ForecastListItem forecast={item} key={item.date} />;
+  }
+
+  render() {
+    const { forecastByDaysList, navigationParams } = this.state;
+    const {
+      city: { value },
+      weatherReport: { description, temp },
+    } = navigationParams;
+
+    return (
+      <View style={style.screen}>
+        <View style={style.currentInformation}>
+          <Text style={style.cityName}>
+            {value}
+          </Text>
+          <Text style={style.weatherDescription}>
+            {description}
+          </Text>
+          <Text style={style.currentTemperature}>
+            {temp}
+          </Text>
+        </View>
+        <FlatList data={forecastByDaysList} renderItem={this.renderItem} />
+      </View>
+    );
+  }
 }
 
-ForecastScreen.propTypes = {
-  navigation: PropTypes.object,
-};
-
 const style = StyleSheet.create({
+  cityName: {
+    fontSize: 35,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  weatherDescription: {
+    fontSize: 18,
+    paddingTop: 5,
+    color: 'white',
+  },
+  currentInformation: {
+    flex: 0.7,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  currentTemperature: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: 'white',
+  },
   screen: {
-    backgroundColor: '#6398ed',
-    width: '100%',
-    height: '100%',
+    flex: 1,
+    justifyContent: 'flex-end',
   },
 });
 

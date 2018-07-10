@@ -1,25 +1,30 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
-import _ from 'lodash';
 import PropTypes from 'prop-types';
 import * as weatherService from '../services/weather';
+import * as dateService from '../services/date';
 
 function ForecastListItem(props) {
   const {
     forecast: { icon, description, date },
   } = props;
+
+  const pictureURI = weatherService.getIconURL(icon);
+  const dayName = dateService.getDayNameFromDate(date);
+
   return (
     <View style={style.itemList}>
       <Text style={style.dayName}>
-        {weatherService.getDayNameFromDate(date)}
+        {dayName}
       </Text>
       <Text>
-        {` ${description}`}
+        {' '}
+        {description}
       </Text>
       <Image
         style={style.weatherIcon}
         source={{
-          uri: weatherService.getIconURL(icon),
+          uri: pictureURI,
         }}
       />
     </View>
