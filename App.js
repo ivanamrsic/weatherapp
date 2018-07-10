@@ -1,6 +1,5 @@
 import { createStackNavigator } from 'react-navigation';
-import CityListScreen from './src/components/CityListScreen';
-import ForecastScreen from './src/components/ForecastScreen';
+import { CityListScreen, ForecastScreen } from './src/components';
 
 export default createStackNavigator({
   CityList: { screen: CityListScreen },

@@ -45,11 +45,13 @@ class ForecastScreen extends Component {
   }
 
   render() {
-    const { forecastByDaysList, navigationParams } = this.state;
     const {
-      city: { value },
-      weatherReport: { description, temp },
-    } = navigationParams;
+      navigationParams: {
+        city: { value },
+        weatherReport: { description, temp },
+      },
+      forecastByDaysList,
+    } = this.state;
 
     return (
       <View style={style.screen}>

@@ -1,6 +1,2 @@
-import CityListScreen from './CityListScreen';
-export ForecastScreen from './ForecastScreen'
-
-export CityListScreen;
-
-export ForecastScreen;
+export { default as CityListScreen } from './CityListScreen';
+export { default as ForecastScreen } from './ForecastScreen';
