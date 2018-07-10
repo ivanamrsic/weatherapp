@@ -8,10 +8,10 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import PropTypes from 'prop-types';
+import { autobind } from 'core-decorators';
 import ForecastListItem from './ForecastListItem';
 import * as weatherService from '../services/weather';
 import * as navigationService from '../services/navigation';
-import { autobind } from '../../node_modules/core-decorators';
 
 class ForecastScreen extends Component {
   static propTypes = {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import * as cityService from '../services/city';
 import CityListItem from './CityListItem';
 
-class CityList extends Component {
+class CityListScreen extends Component {
   static propTypes = {
     navigation: PropTypes.object,
   };
@@ -35,4 +35,4 @@ const style = StyleSheet.create({
   },
 });
 
-export default CityList;
+export default CityListScreen;

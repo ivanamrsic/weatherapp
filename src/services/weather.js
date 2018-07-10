@@ -50,9 +50,9 @@ export async function fetchWeatherForcastForCity(city) {
     },
   });
 
-  const dataFilteredByDays = _.filter(response.data.list, o => o.dt_txt.includes('12:00:00'));
+  const filteredData = _.filter(response.data.list, o => o.dt_txt.includes('12:00:00'));
 
-  const dataMappedToView = _.map(dataFilteredByDays, day => mapModelToView(day));
+  const mappedData = _.map(filteredData, day => mapModelToView(day));
 
-  return dataMappedToView;
+  return mappedData;
 }
