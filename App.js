@@ -2,7 +2,8 @@ import { Provider } from 'react-redux';
 import { createStore, combineReducers } from 'redux';
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
-import { cityReducer } from './src/redux';
+import devToolsEnhancer from 'remote-redux-devtools';
+import { cityReducer } from './src/redux/reducers';
 import { CityListScreen, ForecastScreen } from './src/components';
 
 const Navigator = createStackNavigator({
@@ -13,10 +14,10 @@ const Navigator = createStackNavigator({
 });
 
 const rootReducer = combineReducers({
-  cityReducer,
+  city: cityReducer,
 });
 
-const store = createStore(rootReducer);
+const store = createStore(rootReducer, devToolsEnhancer());
 
 export default function App() {
   return (

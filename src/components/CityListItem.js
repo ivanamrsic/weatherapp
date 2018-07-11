@@ -11,7 +11,7 @@ import {
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
 import { connect } from 'react-redux';
-import { setCurrentCity } from '../redux';
+import { setCurrentCity } from '../redux/actions';
 import * as weather from '../services/weather';
 
 class CityListItem extends Component {

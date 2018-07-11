@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import {
   View,
   FlatList,
@@ -7,12 +6,15 @@ import {
   InteractionManager,
   ActivityIndicator,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ForecastListItem from './ForecastListItem';
 import * as weatherService from '../services/weather';
 import * as navigationService from '../services/navigation';
+import { resetCurrentCity } from '../redux/actions';
+import { getCurrentCity } from '../redux/selectors';
 
 class ForecastScreen extends Component {
   static navigationOptions = {
@@ -39,6 +41,10 @@ class ForecastScreen extends Component {
 
   componentDidMount() {
     InteractionManager.runAfterInteractions(this.fetchForecastData);
+  }
+
+  componentWillUnmount() {
+    this.props.resetCurrentCity();
   }
 
   @autobind
@@ -130,10 +136,12 @@ const style = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
-  city: state.cityReducer,
+  city: getCurrentCity(state),
 });
 
-const mapDispatchToProps = () => ({});
+const mapDispatchToProps = dispatch => ({
+  resetCurrentCity: () => dispatch(resetCurrentCity()),
+});
 
 export default connect(
   mapStateToProps,
