@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Image,
-  InteractionManager,
-} from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { autobind } from 'core-decorators';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -21,10 +13,6 @@ class CityListItem extends Component {
     navigation: PropTypes.object,
     setCurrentCityClick: PropTypes.func,
   };
-
-  componentDidMount() {
-    InteractionManager.runAfterInteractions(this.fetchWeatherDataForCity);
-  }
 
   @autobind
   onPress() {
@@ -118,7 +106,6 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = dispatch => ({
   setCurrentCityClick: city => dispatch(setCurrentCity(city)),
-  fetchCurrentWeatherForCityAction: cityName => dispatch(fetchCurrentWeatherForCity(cityName)),
 });
 
 export default connect(

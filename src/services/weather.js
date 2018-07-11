@@ -1,7 +1,6 @@
 import _ from 'lodash';
 
 const WEATHER_IMAGE_URL = 'https://openweathermap.org/img/w/';
-
 const IMAGE_EXTENSION = '.png';
 const DEGREE_SIGN = '°';
 
