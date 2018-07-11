@@ -10,12 +10,15 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { connect } from 'react-redux';
+import { setCurrentCity } from '../redux';
 import * as weather from '../services/weather';
 
 class CityListItem extends Component {
   static propTypes = {
     city: PropTypes.object,
     navigation: PropTypes.object,
+    setCurrentCityClick: PropTypes.func,
   };
 
   constructor(props) {
@@ -32,10 +35,12 @@ class CityListItem extends Component {
 
   @autobind
   onPress() {
-    const { navigation, city } = this.props;
+    const { navigation, city, setCurrentCityClick } = this.props;
     const { weatherReport } = this.state;
 
-    navigation.navigate('Forecast', { city, weatherReport });
+    setCurrentCityClick(city);
+
+    navigation.navigate('Forecast', { weatherReport });
   }
 
   @autobind
@@ -139,4 +144,13 @@ const style = StyleSheet.create({
   },
 });
 
-export default CityListItem;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = dispatch => ({
+  setCurrentCityClick: city => dispatch(setCurrentCity(city)),
+});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CityListItem);

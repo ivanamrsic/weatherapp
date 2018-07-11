@@ -9,13 +9,19 @@ import {
 } from 'react-native';
 import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import { connect } from 'react-redux';
 import ForecastListItem from './ForecastListItem';
 import * as weatherService from '../services/weather';
 import * as navigationService from '../services/navigation';
 
 class ForecastScreen extends Component {
+  static navigationOptions = {
+    title: 'Grad',
+  };
+
   static propTypes = {
     navigation: PropTypes.object,
+    city: PropTypes.object,
   };
 
   constructor(props) {
@@ -38,10 +44,8 @@ class ForecastScreen extends Component {
   @autobind
   async fetchForecastData() {
     const {
-      navigationParams: {
-        city: { value },
-      },
-    } = this.state;
+      city: { value },
+    } = this.props;
 
     const forecastByDaysList = await weatherService.fetchWeatherForcastForCity(value);
 
@@ -68,8 +72,10 @@ class ForecastScreen extends Component {
 
   render() {
     const {
+      city: { value },
+    } = this.props;
+    const {
       navigationParams: {
-        city: { value },
         weatherReport: { description, temp },
       },
     } = this.state;
@@ -123,4 +129,13 @@ const style = StyleSheet.create({
   },
 });
 
-export default ForecastScreen;
+const mapStateToProps = state => ({
+  city: state.cityReducer,
+});
+
+const mapDispatchToProps = () => ({});
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ForecastScreen);
