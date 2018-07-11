@@ -11,10 +11,9 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ForecastListItem from './ForecastListItem';
-import * as weatherService from '../services/weather';
 import * as navigationService from '../services/navigation';
-import { resetCurrentCity } from '../redux/actions';
-import { getCurrentCity } from '../redux/selectors';
+import { resetCurrentCity, fetchForcastForCity, resetForcast } from '../redux/actions';
+import { getCurrentCity, getForcast } from '../redux/selectors';
 
 class ForecastScreen extends Component {
   static navigationOptions = {
@@ -25,6 +24,9 @@ class ForecastScreen extends Component {
     navigation: PropTypes.object,
     city: PropTypes.object,
     resetCurrentCityAction: PropTypes.func,
+    forcast: PropTypes.array,
+    fetchForcastForCityAction: PropTypes.func,
+    resetForcastAction: PropTypes.func,
   };
 
   constructor(props) {
@@ -34,32 +36,32 @@ class ForecastScreen extends Component {
     const navigationParams = navigationService.getParams(navigation);
 
     this.state = {
-      forecastByDaysList: [],
       navigationParams,
       isLoading: true,
     };
   }
 
   componentDidMount() {
-    InteractionManager.runAfterInteractions(this.fetchForecastData);
+    InteractionManager.runAfterInteractions(this.fetchForcastData);
   }
 
   componentWillUnmount() {
-    const { resetCurrentCityAction } = this.props;
+    const { resetCurrentCityAction, resetForcastAction } = this.props;
 
+    resetForcastAction();
     resetCurrentCityAction();
   }
 
   @autobind
-  async fetchForecastData() {
+  fetchForcastData() {
     const {
       city: { value },
+      fetchForcastForCityAction,
     } = this.props;
 
-    const forecastByDaysList = await weatherService.fetchWeatherForcastForCity(value);
+    fetchForcastForCityAction(value);
 
     this.setState({
-      forecastByDaysList,
       isLoading: false,
     });
   }
@@ -70,13 +72,14 @@ class ForecastScreen extends Component {
   }
 
   renderInfo() {
-    const { isLoading, forecastByDaysList } = this.state;
+    const { isLoading } = this.state;
+    const { forcast } = this.props;
 
     if (isLoading) {
       return <ActivityIndicator size="large" color="#000000" />;
     }
 
-    return <FlatList data={forecastByDaysList} renderItem={this.renderItem} />;
+    return <FlatList data={forcast} renderItem={this.renderItem} />;
   }
 
   render() {
@@ -140,10 +143,13 @@ const style = StyleSheet.create({
 
 const mapStateToProps = state => ({
   city: getCurrentCity(state),
+  forcast: getForcast(state),
 });
 
 const mapDispatchToProps = dispatch => ({
   resetCurrentCityAction: () => dispatch(resetCurrentCity()),
+  fetchForcastForCityAction: cityName => dispatch(fetchForcastForCity(cityName)),
+  resetForcastAction: () => dispatch(resetForcast()),
 });
 
 export default connect(
