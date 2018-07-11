@@ -13,7 +13,3 @@ export function resetCurrentCity() {
     data: {},
   };
 }
-
-export function getCurrentCity(state) {
-  return state.city;
-}

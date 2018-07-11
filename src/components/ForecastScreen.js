@@ -24,6 +24,7 @@ class ForecastScreen extends Component {
   static propTypes = {
     navigation: PropTypes.object,
     city: PropTypes.object,
+    resetCurrentCityAction: PropTypes.func,
   };
 
   constructor(props) {
@@ -44,7 +45,9 @@ class ForecastScreen extends Component {
   }
 
   componentWillUnmount() {
-    this.props.resetCurrentCity();
+    const { resetCurrentCityAction } = this.props;
+
+    resetCurrentCityAction();
   }
 
   @autobind
@@ -140,7 +143,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  resetCurrentCity: () => dispatch(resetCurrentCity()),
+  resetCurrentCityAction: () => dispatch(resetCurrentCity()),
 });
 
 export default connect(

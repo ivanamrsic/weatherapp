@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
 import { FlatList, View, StyleSheet } from 'react-native';
 import { autobind } from 'core-decorators';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import * as cityService from '../services/city';
 import CityListItem from './CityListItem';

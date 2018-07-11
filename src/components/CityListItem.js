@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import {
   View,
   Text,
@@ -8,8 +7,9 @@ import {
   Image,
   InteractionManager,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setCurrentCity } from '../redux/actions';
 import * as weather from '../services/weather';
