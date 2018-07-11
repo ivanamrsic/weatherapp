@@ -11,7 +11,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import ForecastListItem from './ForecastListItem';
-import * as navigationService from '../services/navigation';
 import { resetCurrentCity, fetchForcastForCity, resetForcast } from '../redux/actions';
 import { getCurrentCity, getForcast } from '../redux/selectors';
 
@@ -21,7 +20,6 @@ class ForecastScreen extends Component {
   };
 
   static propTypes = {
-    navigation: PropTypes.object,
     city: PropTypes.object,
     resetCurrentCityAction: PropTypes.func,
     forcast: PropTypes.array,
@@ -32,11 +30,7 @@ class ForecastScreen extends Component {
   constructor(props) {
     super(props);
 
-    const { navigation } = this.props;
-    const navigationParams = navigationService.getParams(navigation);
-
     this.state = {
-      navigationParams,
       isLoading: true,
     };
   }
@@ -84,13 +78,11 @@ class ForecastScreen extends Component {
 
   render() {
     const {
-      city: { value },
-    } = this.props;
-    const {
-      navigationParams: {
-        weatherReport: { description, temp },
+      city: {
+        currentWeather: { description, temp },
+        value,
       },
-    } = this.state;
+    } = this.props;
 
     return (
       <View style={style.screen}>

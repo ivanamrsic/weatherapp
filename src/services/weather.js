@@ -1,8 +1,5 @@
-import Config from 'react-native-config';
-import axios from 'react-native-axios';
 import _ from 'lodash';
 
-const WEATHER_DATA_URL = 'https://api.openweathermap.org/data/2.5/weather';
 const WEATHER_IMAGE_URL = 'https://openweathermap.org/img/w/';
 
 const IMAGE_EXTENSION = '.png';
@@ -24,18 +21,8 @@ export function mapModelToView(model) {
     description: _.get(model, 'weather[0].main'),
     icon: _.get(model, 'weather[0].icon'),
     date: _.get(model, 'dt_txt'),
+    cityName: _.get(model, 'name'),
   };
-}
-
-export async function fetchWeatherData(city) {
-  const response = await axios.get(WEATHER_DATA_URL, {
-    params: {
-      q: city.value,
-      APPID: Config.APPID,
-    },
-  });
-
-  return mapModelToView(response.data);
 }
 
 export function getIconURL(icon) {

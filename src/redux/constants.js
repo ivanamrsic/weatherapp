@@ -9,3 +9,4 @@ export const SET_CURRENT_CITY = 'SET_CURRENT_CITY';
 export const RESET_CURRENT_CITY = 'RESET_CURRENT_CITY';
 
 export const FORCAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+export const WEATHER_DATA_URL = 'https://api.openweathermap.org/data/2.5/weather';

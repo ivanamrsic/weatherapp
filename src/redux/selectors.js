@@ -5,3 +5,7 @@ export function getCurrentCity(state) {
 export function getForcast(state) {
   return state.forcast;
 }
+
+export function getCities(state) {
+  return state.cities;
+}

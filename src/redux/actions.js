@@ -43,3 +43,24 @@ export function resetForcast() {
     data: [],
   };
 }
+
+export async function fetchCurrentWeatherForCity(cityName) {
+  try {
+    const response = await axios.get(constants.WEATHER_DATA_URL, {
+      params: {
+        q: cityName,
+        APPID: Config.APPID,
+      },
+    });
+
+    return {
+      type: constants.FETCH_CURRENT_WEATHER_FOR_CITY_SUCCESS,
+      data: response.data,
+    };
+  } catch (err) {
+    return {
+      type: constants.FETCH_CURRENT_WEATHER_FOR_CITY_FAILURE,
+      data: err,
+    };
+  }
+}

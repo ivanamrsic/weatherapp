@@ -11,6 +11,7 @@ import { autobind } from 'core-decorators';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import _ from 'lodash';
 import { setCurrentCity } from '../redux/actions';
 import * as weather from '../services/weather';
 
@@ -21,56 +22,25 @@ class CityListItem extends Component {
     setCurrentCityClick: PropTypes.func,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: false,
-      weatherReport: {},
-    };
-  }
-
-  async componentDidMount() {
+  componentDidMount() {
     InteractionManager.runAfterInteractions(this.fetchWeatherDataForCity);
   }
 
   @autobind
   onPress() {
     const { navigation, city, setCurrentCityClick } = this.props;
-    const { weatherReport } = this.state;
 
     setCurrentCityClick(city);
 
-    navigation.navigate('Forecast', { weatherReport });
-  }
-
-  @autobind
-  async fetchWeatherDataForCity() {
-    const { city } = this.props;
-
-    try {
-      this.setState({
-        isLoading: true,
-      });
-
-      const weatherReport = await weather.fetchWeatherData(city);
-
-      this.setState({
-        weatherReport,
-      });
-    } finally {
-      this.setState({
-        isLoading: false,
-      });
-    }
+    navigation.navigate('Forecast');
   }
 
   renderInformation() {
-    const {
-      isLoading,
-      weatherReport: { tempMin, tempMax, icon, description },
-    } = this.state;
+    const { city } = this.props;
 
-    if (isLoading) {
+    const { description, tempMax, tempMin, icon } = _.get(city, 'currentWeather');
+
+    if (description === undefined) {
       return <ActivityIndicator size="large" color="#000000" />;
     }
 
@@ -148,6 +118,7 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = dispatch => ({
   setCurrentCityClick: city => dispatch(setCurrentCity(city)),
+  fetchCurrentWeatherForCityAction: cityName => dispatch(fetchCurrentWeatherForCity(cityName)),
 });
 
 export default connect(
