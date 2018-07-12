@@ -7,6 +7,7 @@ import _ from 'lodash';
 import CityListItem from './CityListItem';
 import { getCities } from '../redux/selectors';
 import { fetchCurrentWeatherForCity } from '../redux/actions';
+import AddCity from './AddCity';
 
 class CityListScreen extends Component {
   static propTypes = {
@@ -64,6 +65,9 @@ class CityListScreen extends Component {
 
     return (
       <View style={style.list}>
+        <View style={style.addCity}>
+          <AddCity />
+        </View>
         <FlatList
           refreshing={refreshing}
           onRefresh={this.handleRefresh}
@@ -82,6 +86,12 @@ const style = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     backgroundColor: '#4286f4',
+  },
+  addCity: {
+    backgroundColor: '#2b5ba8',
+    flex: 0.07,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
