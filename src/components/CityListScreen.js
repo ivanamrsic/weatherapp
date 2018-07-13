@@ -89,7 +89,7 @@ const style = StyleSheet.create({
   },
   addCity: {
     backgroundColor: '#2b5ba8',
-    flex: 0.07,
+    flex: 0.08,
     justifyContent: 'center',
     alignItems: 'center',
   },

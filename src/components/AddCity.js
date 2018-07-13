@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Button, TextInput, StyleSheet } from 'react-native';
-import { autobind } from '../../node_modules/core-decorators';
+import { autobind } from 'core-decorators';
 
 class AddCity extends Component {
   constructor(props) {
@@ -25,8 +25,8 @@ class AddCity extends Component {
           style={style.cityInput}
           placeholder="Search..."
           onChangeText={this.onChangeText}
+          placeholderTextColor="gray"
         />
-        <Button title="+" color="white" />
       </View>
     );
   }
@@ -39,6 +39,7 @@ const style = StyleSheet.create({
     borderRadius: 5,
     height: 30,
     flex: 0.95,
+    paddingLeft: 10,
   },
   addCityView: {
     flex: 1,

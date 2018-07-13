@@ -23,4 +23,9 @@ export const cities = [
     value: 'Osijek',
     currentWeather: {},
   },
+  {
+    key: 5,
+    value: 'Sisak',
+    currentWeather: {},
+  },
 ];
