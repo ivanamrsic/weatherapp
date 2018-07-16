@@ -1,71 +1,34 @@
-import React, { Component } from 'react';
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  StyleSheet,
-  ActivityIndicator,
-  Image,
-  InteractionManager,
-} from 'react-native';
-import PropTypes from 'prop-types';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { autobind } from 'core-decorators';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import _ from 'lodash';
 import * as weather from '../services/weather';
 
 class CityListItem extends Component {
   static propTypes = {
     city: PropTypes.object,
     navigation: PropTypes.object,
+    onPress: PropTypes.func,
   };
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      isLoading: false,
-      weatherReport: {},
-    };
-  }
-
-  async componentDidMount() {
-    InteractionManager.runAfterInteractions(this.fetchWeatherDataForCity);
-  }
-
   @autobind
-  onPress() {
-    const { navigation, city } = this.props;
-    const { weatherReport } = this.state;
+  handlePress() {
+    const { navigation, city, onPress } = this.props;
 
-    navigation.navigate('Forecast', { city, weatherReport });
-  }
-
-  @autobind
-  async fetchWeatherDataForCity() {
-    const { city } = this.props;
-
-    try {
-      this.setState({
-        isLoading: true,
-      });
-
-      const weatherReport = await weather.fetchWeatherData(city);
-
-      this.setState({
-        weatherReport,
-      });
-    } finally {
-      this.setState({
-        isLoading: false,
-      });
+    if (_.isFunction(onPress)) {
+      onPress(city);
     }
+
+    navigation.navigate('Forecast', { title: city.value });
   }
 
   renderInformation() {
-    const {
-      isLoading,
-      weatherReport: { tempMin, tempMax, icon, description },
-    } = this.state;
+    const { city } = this.props;
 
-    if (isLoading) {
+    const { description, tempMax, tempMin, icon } = _.get(city, 'currentWeather');
+
+    if (_.get(city, 'isLoading')) {
       return <ActivityIndicator size="large" color="#000000" />;
     }
 
@@ -98,7 +61,7 @@ class CityListItem extends Component {
     const { city } = this.props;
 
     return (
-      <TouchableOpacity onPress={this.onPress}>
+      <TouchableOpacity onPress={this.handlePress}>
         <View style={style.citySection}>
           <Text style={style.cityName}>
             {city.value}

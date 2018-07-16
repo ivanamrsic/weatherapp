@@ -10,10 +10,7 @@
   "rules": {
     "arrow-parens": ["error", "as-needed"],
     "comma-dangle": "off",
-    "react/jsx-filename-extension": [
-      "error",
-      { "extensions": [".js", ".jsx"] }
-    ],
+    "react/jsx-filename-extension": ["error", { "extensions": [".js", ".jsx"] }],
     "curly": ["error", "all"],
     "global-require": "off",
     "no-console": ["error", { "allow": ["warn", "error"] }],

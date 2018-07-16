@@ -1,5 +1,5 @@
-import React from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
+import React from 'react';
 import PropTypes from 'prop-types';
 import * as weatherService from '../services/weather';
 import * as dateService from '../services/date';

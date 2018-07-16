@@ -1,6 +1,11 @@
-import { combineReducers } from 'redux';
-import currentCity from './currentCity';
+export { currentCityReducer, citiesReducer, forcastReducer } from './reducers';
 
-export default combineReducers({
-  currentCity,
-});
+export {
+  setCurrentCity,
+  resetCurrentCity,
+  fetchForcastForCity,
+  resetForcast,
+  fetchCurrentWeatherForCity,
+} from './actions';
+
+export { getCurrentCity, getForcast, getCities } from './selectors';

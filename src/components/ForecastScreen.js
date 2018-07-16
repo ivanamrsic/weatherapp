@@ -1,4 +1,3 @@
-import React, { Component } from 'react';
 import {
   View,
   FlatList,
@@ -7,46 +6,64 @@ import {
   InteractionManager,
   ActivityIndicator,
 } from 'react-native';
-import PropTypes from 'prop-types';
 import { autobind } from 'core-decorators';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import ForecastListItem from './ForecastListItem';
-import * as weatherService from '../services/weather';
-import * as navigationService from '../services/navigation';
+import {
+  resetCurrentCity,
+  fetchForcastForCity,
+  resetForcast,
+  getCurrentCity,
+  getForcast,
+} from '../redux';
 
 class ForecastScreen extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    title: `Forcast for ${navigation.state.params.title}`,
+  });
+
   static propTypes = {
-    navigation: PropTypes.object,
+    city: PropTypes.object,
+    resetCurrentCity: PropTypes.func,
+    forcast: PropTypes.array,
+    fetchForcastForCity: PropTypes.func,
+    resetForcast: PropTypes.func,
   };
 
   constructor(props) {
     super(props);
 
-    const { navigation } = this.props;
-    const navigationParams = navigationService.getParams(navigation);
-
     this.state = {
-      forecastByDaysList: [],
-      navigationParams,
       isLoading: true,
     };
   }
 
   componentDidMount() {
-    InteractionManager.runAfterInteractions(this.fetchForecastData);
+    InteractionManager.runAfterInteractions(this.fetchForcastData);
+  }
+
+  componentWillUnmount() {
+    // eslint-disable-next-line no-shadow
+    const { resetCurrentCity, resetForcast } = this.props;
+
+    resetForcast();
+    resetCurrentCity();
   }
 
   @autobind
-  async fetchForecastData() {
+  fetchForcastData() {
     const {
-      navigationParams: {
-        city: { value },
-      },
-    } = this.state;
+      // eslint-disable-next-line no-shadow
+      fetchForcastForCity,
+      city: { value },
+    } = this.props;
 
-    const forecastByDaysList = await weatherService.fetchWeatherForcastForCity(value);
+    fetchForcastForCity(value);
 
     this.setState({
-      forecastByDaysList,
       isLoading: false,
     });
   }
@@ -57,22 +74,23 @@ class ForecastScreen extends Component {
   }
 
   renderInfo() {
-    const { isLoading, forecastByDaysList } = this.state;
+    const { isLoading } = this.state;
+    const { forcast } = this.props;
 
     if (isLoading) {
       return <ActivityIndicator size="large" color="#000000" />;
     }
 
-    return <FlatList data={forecastByDaysList} renderItem={this.renderItem} />;
+    return <FlatList data={forcast} renderItem={this.renderItem} />;
   }
 
   render() {
     const {
-      navigationParams: {
-        city: { value },
-        weatherReport: { description, temp },
+      city: {
+        currentWeather: { description, temp },
+        value,
       },
-    } = this.state;
+    } = this.props;
 
     return (
       <View style={style.screen}>
@@ -123,4 +141,21 @@ const style = StyleSheet.create({
   },
 });
 
-export default ForecastScreen;
+const mapStateToProps = state => ({
+  city: getCurrentCity(state),
+  forcast: getForcast(state),
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    resetCurrentCity,
+    fetchForcastForCity,
+    resetForcast,
+  },
+  dispatch
+);
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ForecastScreen);
