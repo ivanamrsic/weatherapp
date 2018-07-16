@@ -8,5 +8,6 @@ export const FETCH_CURRENT_WEATHER_FOR_CITY_FAILURE = 'FETCH_CURRENT_WEATHER_FOR
 export const SET_CURRENT_CITY = 'SET_CURRENT_CITY';
 export const RESET_CURRENT_CITY = 'RESET_CURRENT_CITY';
 
-export const FORCAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
-export const WEATHER_DATA_URL = 'https://api.openweathermap.org/data/2.5/weather';
+export const TOGGLE_IS_LOADING = 'TOGGLE_IS_LOADING';
+const FORCAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
+const WEATHER_DATA_URL = 'https://api.openweathermap.org/data/2.5/weather';

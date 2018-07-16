@@ -4,6 +4,7 @@ import React from 'react';
 import { createStackNavigator } from 'react-navigation';
 import devToolsEnhancer from 'remote-redux-devtools';
 import asyncAwait from 'redux-async-await';
+import thunk from 'redux-thunk';
 import { currentCityReducer, forcastReducer, citiesReducer } from './src/redux/reducers';
 import { CityListScreen, ForecastScreen } from './src/components';
 
@@ -21,7 +22,7 @@ const rootReducer = combineReducers({
 const store = createStore(
   rootReducer,
   compose(
-    applyMiddleware(asyncAwait),
+    applyMiddleware(thunk, asyncAwait),
     devToolsEnhancer()
   )
 );

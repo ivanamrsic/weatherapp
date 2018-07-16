@@ -1,18 +1,19 @@
-import { FlatList, View, StyleSheet } from 'react-native';
+import { FlatList, View, StyleSheet, InteractionManager } from 'react-native';
 import { autobind } from 'core-decorators';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { bindActionCreators } from 'redux';
 import CityListItem from './CityListItem';
-import { getCities } from '../redux/selectors';
-import { fetchCurrentWeatherForCity } from '../redux/actions';
+import { fetchCurrentWeatherForCity, setCurrentCity, getCities } from '../redux';
 
 class CityListScreen extends Component {
   static propTypes = {
     navigation: PropTypes.object,
     cities: PropTypes.array,
-    fetchCurrentWeatherForCityAction: PropTypes.func,
+    fetchCityWeather: PropTypes.func,
+    onCityPress: PropTypes.func,
   };
 
   constructor(props) {
@@ -24,7 +25,7 @@ class CityListScreen extends Component {
   }
 
   componentDidMount() {
-    this.fetchWeatherForCities();
+    InteractionManager.runAfterInteractions(this.fetchWeather());
   }
 
   @autobind
@@ -33,29 +34,27 @@ class CityListScreen extends Component {
       {
         refreshing: true,
       },
-      () => {
-        this.fetchWeatherForCities();
-      }
+      this.fetchWeather()
     );
   }
 
   @autobind
-  fetchWeatherForCities() {
-    const { cities, fetchCurrentWeatherForCityAction } = this.props;
+  fetchWeather() {
+    const { cities, fetchCityWeather } = this.props;
 
-    _.forEach(cities, city => {
-      fetchCurrentWeatherForCityAction(city.value);
+    const actions = _.map(cities, city => {
+      fetchCityWeather(city.value);
     });
 
-    this.setState({
-      refreshing: false,
-    });
+    Promise.all(actions).then(() => this.setState({ refreshing: false }));
   }
 
   @autobind
   renderItem({ item: city }) {
-    const { navigation } = this.props;
-    return <CityListItem city={city} navigation={navigation} key={city.value} />;
+    const { navigation, onCityPress } = this.props;
+    return (
+      <CityListItem city={city} navigation={navigation} key={city.value} onPress={onCityPress} />
+    );
   }
 
   render() {
@@ -89,9 +88,13 @@ const mapStateToProps = state => ({
   cities: getCities(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  fetchCurrentWeatherForCityAction: cityName => dispatch(fetchCurrentWeatherForCity(cityName)),
-});
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    onCityPress: setCurrentCity,
+    fetchCityWeather: fetchCurrentWeatherForCity,
+  },
+  dispatch
+);
 
 export default connect(
   mapStateToProps,

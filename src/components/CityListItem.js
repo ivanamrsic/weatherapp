@@ -2,25 +2,25 @@ import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, Image } fr
 import { autobind } from 'core-decorators';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { connect } from 'react-redux';
 import _ from 'lodash';
-import { setCurrentCity } from '../redux/actions';
 import * as weather from '../services/weather';
 
 class CityListItem extends Component {
   static propTypes = {
     city: PropTypes.object,
     navigation: PropTypes.object,
-    setCurrentCityClick: PropTypes.func,
+    onPress: PropTypes.func,
   };
 
   @autobind
-  onPress() {
-    const { navigation, city, setCurrentCityClick } = this.props;
+  handlePress() {
+    const { navigation, city, onPress } = this.props;
 
-    setCurrentCityClick(city);
+    if (_.isFunction(onPress)) {
+      onPress(city);
+    }
 
-    navigation.navigate('Forecast');
+    navigation.navigate('Forecast', { title: city.value });
   }
 
   renderInformation() {
@@ -28,7 +28,7 @@ class CityListItem extends Component {
 
     const { description, tempMax, tempMin, icon } = _.get(city, 'currentWeather');
 
-    if (description === undefined) {
+    if (_.get(city, 'isLoading')) {
       return <ActivityIndicator size="large" color="#000000" />;
     }
 
@@ -61,7 +61,7 @@ class CityListItem extends Component {
     const { city } = this.props;
 
     return (
-      <TouchableOpacity onPress={this.onPress}>
+      <TouchableOpacity onPress={this.handlePress}>
         <View style={style.citySection}>
           <Text style={style.cityName}>
             {city.value}
@@ -102,13 +102,4 @@ const style = StyleSheet.create({
   },
 });
 
-const mapStateToProps = () => ({});
-
-const mapDispatchToProps = dispatch => ({
-  setCurrentCityClick: city => dispatch(setCurrentCity(city)),
-});
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(CityListItem);
+export default CityListItem;

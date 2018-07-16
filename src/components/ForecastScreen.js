@@ -10,21 +10,27 @@ import { autobind } from 'core-decorators';
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import ForecastListItem from './ForecastListItem';
-import { resetCurrentCity, fetchForcastForCity, resetForcast } from '../redux/actions';
-import { getCurrentCity, getForcast } from '../redux/selectors';
+import {
+  resetCurrentCity,
+  fetchForcastForCity,
+  resetForcast,
+  getCurrentCity,
+  getForcast,
+} from '../redux';
 
 class ForecastScreen extends Component {
-  static navigationOptions = {
-    title: 'Grad',
-  };
+  static navigationOptions = ({ navigation }) => ({
+    title: `Forcast for ${navigation.state.params.title}`,
+  });
 
   static propTypes = {
     city: PropTypes.object,
-    resetCurrentCityAction: PropTypes.func,
+    resetCurrentCity: PropTypes.func,
     forcast: PropTypes.array,
-    fetchForcastForCityAction: PropTypes.func,
-    resetForcastAction: PropTypes.func,
+    fetchForcastForCity: PropTypes.func,
+    resetForcast: PropTypes.func,
   };
 
   constructor(props) {
@@ -40,20 +46,22 @@ class ForecastScreen extends Component {
   }
 
   componentWillUnmount() {
-    const { resetCurrentCityAction, resetForcastAction } = this.props;
+    // eslint-disable-next-line no-shadow
+    const { resetCurrentCity, resetForcast } = this.props;
 
-    resetForcastAction();
-    resetCurrentCityAction();
+    resetForcast();
+    resetCurrentCity();
   }
 
   @autobind
   fetchForcastData() {
     const {
+      // eslint-disable-next-line no-shadow
+      fetchForcastForCity,
       city: { value },
-      fetchForcastForCityAction,
     } = this.props;
 
-    fetchForcastForCityAction(value);
+    fetchForcastForCity(value);
 
     this.setState({
       isLoading: false,
@@ -138,11 +146,14 @@ const mapStateToProps = state => ({
   forcast: getForcast(state),
 });
 
-const mapDispatchToProps = dispatch => ({
-  resetCurrentCityAction: () => dispatch(resetCurrentCity()),
-  fetchForcastForCityAction: cityName => dispatch(fetchForcastForCity(cityName)),
-  resetForcastAction: () => dispatch(resetForcast()),
-});
+const mapDispatchToProps = dispatch => bindActionCreators(
+  {
+    resetCurrentCity,
+    fetchForcastForCity,
+    resetForcast,
+  },
+  dispatch
+);
 
 export default connect(
   mapStateToProps,
